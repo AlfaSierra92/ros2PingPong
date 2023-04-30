@@ -14,12 +14,19 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(plotter_time REQUIRED)   
+#find_package(rosidl_default_generators REQUIRED)
+#rosidl_generate_interfaces(${PROJECT_NAME}
+#  "msg/Plotter.msg"
+#)
 
 add_executable(talker src/publisher_member_function.cpp)
-ament_target_dependencies(talker rclcpp std_msgs)
+ament_target_dependencies(talker rclcpp std_msgs plotter_time)
 
 add_executable(listener src/subscriber_member_function.cpp)
-ament_target_dependencies(listener rclcpp std_msgs)
+ament_target_dependencies(listener rclcpp std_msgs plotter_time)
+
+#ament_export_dependencies(rosidl_default_runtime)
 
 install(TARGETS
   talker

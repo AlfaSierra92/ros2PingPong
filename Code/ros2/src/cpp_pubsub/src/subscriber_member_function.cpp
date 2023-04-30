@@ -18,26 +18,45 @@
 #include "std_msgs/msg/string.hpp"
 using std::placeholders::_1;
 
-class MinimalSubscriber : public rclcpp::Node
-{
+using namespace std::chrono_literals;
+
+class MinimalSubscriber : public rclcpp::Node{
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+  rclcpp::TimerBase::SharedPtr timer_;
+  size_t count_;
+
 public:
   MinimalSubscriber()
-  : Node("minimal_subscriber")
-  {
+  : Node("minimal_subscriber"){
+    count_ = 0;
     subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+      "topic1", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+
+    publisher_ = this->create_publisher<std_msgs::msg::String>("topic2", 10);
+    //timer_ = this->create_wall_timer(
+      //500ms, std::bind(&MinimalSubscriber::timer_callback, this));
   }
 
 private:
-  void topic_callback(const std_msgs::msg::String::SharedPtr msg) const
-  {
+  //funzione richiamata da subscriber
+  void topic_callback(const std_msgs::msg::String::SharedPtr msg){
+
     RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
+
+    auto message = std_msgs::msg::String();
+    message.data = "Pong of " + msg->data;
+    RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
+    publisher_->publish(message);
   }
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+
+  /*void timer_callback(){ //funzione richiamata da publisher
+
+  }*/
+  
 };
 
-int main(int argc, char * argv[])
-{
+int main(int argc, char * argv[]){
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<MinimalSubscriber>());
   rclcpp::shutdown();
