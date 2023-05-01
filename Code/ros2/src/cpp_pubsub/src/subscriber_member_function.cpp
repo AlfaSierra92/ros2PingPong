@@ -26,12 +26,19 @@ class MinimalSubscriber : public rclcpp::Node{
   rclcpp::TimerBase::SharedPtr timer_;
   size_t count_;
 
+  rclcpp::QoS qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
+
 public:
   MinimalSubscriber()
   : Node("minimal_subscriber"){
     count_ = 0;
+
+    qos.keep_last(10);
+    qos.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+    qos.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+
     subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "topic1", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+      "topic1", qos, std::bind(&MinimalSubscriber::topic_callback, this, _1));
 
     publisher_ = this->create_publisher<std_msgs::msg::String>("topic2", 10);
     //timer_ = this->create_wall_timer(
