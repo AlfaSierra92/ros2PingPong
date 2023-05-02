@@ -49,12 +49,12 @@ public:
     publisher_ = this->create_publisher<std_msgs::msg::String>("topic1", qos);
     publisher_time = this->create_publisher<plotter_time::msg::Plottime>("time", qos);
 
-    timer_ = this->create_wall_timer(
-      4000ms, std::bind(&MinimalPublisher::timer_callback, this));
+    timer_ = this->create_wall_timer(4000ms, std::bind(&MinimalPublisher::timer_callback, this));
+    //timer_ = this->create_wall_timer(5000ms, std::bind(&MinimalPublisher::function, this));
+    //timer_callback();
 
     subscription_ = this->create_subscription<std_msgs::msg::String>(
       "topic2", 10, std::bind(&MinimalPublisher::topic_callback, this, _1));
-      
   }
 
 private:
@@ -76,20 +76,26 @@ private:
     RCLCPP_INFO(this->get_logger(), "Time is: %lld", ns);
   }
 
+  void function(){
+    RCLCPP_INFO(this->get_logger(), "Staying alive");
+  }
+
   //funzione richiamata da subscriber
-  void topic_callback(const std_msgs::msg::String::SharedPtr msg) const{
+  void topic_callback(const std_msgs::msg::String::SharedPtr msg) {
     //RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str()); //ONLY FOR DEBUG
     rclcpp::Clock *clk = new rclcpp::Clock();
     rclcpp::Time time = clk->now();
     rcl_time_point_value_t ns = time.nanoseconds(); // Uint64_t in ref implementation
     rcl_time_point_value_t t2 = ns - t_pong; //calcola il tempo intercorso tra ping e pong
 
-    RCLCPP_INFO(this->get_logger(), "TIME PASSED: %f", (float) t2/1000000);
+    RCLCPP_INFO(this->get_logger(), "TIME: %lld", ns);
+    RCLCPP_INFO(this->get_logger(), "TIME PASSED: %f", (float) t2/1000000000);
     
     auto message_time = plotter_time::msg::Plottime();
-    message_time.time = (float) t2/1000000; //converte il tempo da nanosecondi in secondi
+    message_time.time = (float) t2/1000000000; //converte il tempo da nanosecondi in secondi
     message_time.dim = 37*count_;
     publisher_time->publish(message_time);
+    timer_callback();
   }
 
 };
