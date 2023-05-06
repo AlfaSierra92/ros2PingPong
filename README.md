@@ -25,5 +25,5 @@ Per il grafico, una volta lanciati i nodi di cui sopra, aprire un terzo terminal
 source install/setup.bash
 ros2 run rqt_plot rqt_plot
 ```
-Una volta aperto, digitare `/time/time` come riportato nell'immagine e premere il tasto invio (assicurarsi poi di aver selezionato *autoscroll* altrimenti non vedete il grafico).
+Una volta aperto, digitare `/time/time` come riportato nell'immagine e premere il tasto invio assicurandoti poi di aver selezionato *autoscroll* altrimenti non vedete il grafico (sì, nell'immagine non è selezionato ma non mi andava di rifare lo screen).
 ![Screenshot 2023-05-06 103646](https://user-images.githubusercontent.com/4050967/236613412-d6ec97e8-a670-480c-b0c4-2db3c2668aaa.png)
