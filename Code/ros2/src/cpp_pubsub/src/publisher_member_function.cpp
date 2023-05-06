@@ -42,16 +42,16 @@ class MinimalPublisher : public rclcpp::Node{
 public:
   MinimalPublisher()
   : Node("minimal_publisher"), count_(0){
+    //qos settings
     qos.keep_last(10);
     qos.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
     qos.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+    //end of qos settings
     
     publisher_ = this->create_publisher<std_msgs::msg::String>("topic1", qos);
     publisher_time = this->create_publisher<plotter_time::msg::Plottime>("time", qos);
 
     timer_ = this->create_wall_timer(4000ms, std::bind(&MinimalPublisher::timer_callback, this));
-    //timer_ = this->create_wall_timer(5000ms, std::bind(&MinimalPublisher::function, this));
-    //timer_callback();
 
     subscription_ = this->create_subscription<std_msgs::msg::String>(
       "topic2", 10, std::bind(&MinimalPublisher::topic_callback, this, _1));
@@ -64,7 +64,7 @@ private:
     message.data = /*"Ping " + */std::to_string(count_++);
     RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
     for(size_t i = 0;i<count_;i++){
-      message.data = message.data + "0000000000000000000000000000000000000";
+      message.data = message.data + "0000000000000000000000000000000000000"; //riempio il messaggio andando ad aggiungere sempre più zeri
     }
     publisher_->publish(message);
 
@@ -73,11 +73,7 @@ private:
     rclcpp::Time time = clk->now();
     rcl_time_point_value_t ns = time.nanoseconds(); // Uint64_t in ref implementation
     t_pong = ns; //istante di invio messaggio
-    RCLCPP_INFO(this->get_logger(), "Time is: %lld", ns);
-  }
-
-  void function(){
-    RCLCPP_INFO(this->get_logger(), "Staying alive");
+    RCLCPP_INFO(this->get_logger(), "At launch, time is: %lld", ns);
   }
 
   //funzione richiamata da subscriber
@@ -88,12 +84,15 @@ private:
     rcl_time_point_value_t ns = time.nanoseconds(); // Uint64_t in ref implementation
     rcl_time_point_value_t t2 = ns - t_pong; //calcola il tempo intercorso tra ping e pong
 
-    RCLCPP_INFO(this->get_logger(), "TIME: %lld", ns);
-    RCLCPP_INFO(this->get_logger(), "TIME PASSED: %f", (float) t2/1000000000);
+    RCLCPP_INFO(this->get_logger(), "On reception, time is: %lld", ns);
+    RCLCPP_INFO(this->get_logger(), "TIME PASSED: %f", (float) t2/1000000000); //converto i ns in sec
     
+    //invio il messaggio per plottare i dati
+    //ho creato un format di messaggio custom
+    //ogni volta invia una coppia di dati: dimensione del payload e round-trip time del pacchetto
     auto message_time = plotter_time::msg::Plottime();
     message_time.time = (float) t2/1000000000; //converte il tempo da nanosecondi in secondi
-    message_time.dim = 37*count_;
+    message_time.dim = 37*count_; //perhè 37? Perchè ad ogni ciclo for aggiungo 37 zeri
     publisher_time->publish(message_time);
     timer_callback();
   }
