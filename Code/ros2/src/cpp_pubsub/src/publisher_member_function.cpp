@@ -22,6 +22,8 @@ using std::placeholders::_1;
 
 #include "plotter_time/msg/plottime.hpp"
 
+//#define CONTINUOSLY //decomment it to sends msgs continuosly without 4 seconds pause
+
 using namespace std::chrono_literals;
 
 /* This example creates a subclass of Node and uses std::bind() to register a
@@ -94,7 +96,9 @@ private:
     message_time.time = (float) t2/1000000000; //converte il tempo da nanosecondi in secondi
     message_time.dim = 37*count_; //perhè 37? Perchè ad ogni ciclo for aggiungo 37 zeri
     publisher_time->publish(message_time);
+    #ifdef CONTINUOSLY
     timer_callback();
+    #endif
   }
 
 };
