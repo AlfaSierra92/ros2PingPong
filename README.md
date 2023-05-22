@@ -27,3 +27,19 @@ ros2 run rqt_plot rqt_plot
 ```
 Una volta aperto, digitare `/time/time` come riportato nell'immagine e premere il tasto invio assicurandoti poi di aver selezionato *autoscroll* altrimenti non vedete il grafico (sì, nell'immagine non è selezionato ma non mi andava di rifare lo screen).
 ![Screenshot 2023-05-06 103646](https://user-images.githubusercontent.com/4050967/236613412-d6ec97e8-a670-480c-b0c4-2db3c2668aaa.png)
+
+## Lanciare gym_ros
+Eseguire
+```bash
+cd sim/f1tenth_gym_ros
+source install/setup.bash
+ros2 launch f1tenth_gym_ros gym_bridge_launch.py
+```
+
+## Lanciare ftg_node
+Eseguire
+```bash
+cd sim/F1tenth-Rtes-FTG
+source install/setup.bash
+ros2 launch ftg ftg_node.launch.xml
+```
