@@ -29,7 +29,7 @@ Una volta aperto, digitare `/time/time` come riportato nell'immagine e premere i
 ![Screenshot 2023-05-06 103646](https://user-images.githubusercontent.com/4050967/236613412-d6ec97e8-a670-480c-b0c4-2db3c2668aaa.png)
 
 ## Lanciare gym_ros
-Eseguire
+Eseguire:
 ```bash
 cd sim/f1tenth_gym_ros
 source install/setup.bash
@@ -37,7 +37,7 @@ ros2 launch f1tenth_gym_ros gym_bridge_launch.py
 ```
 
 ## Lanciare ftg_node
-Eseguire
+[Scaricare](https://github.com/HiPeRT/F1tenth-RTES-FTG) ed eseguire:
 ```bash
 cd sim/F1tenth-Rtes-FTG
 source install/setup.bash
